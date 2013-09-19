@@ -49,7 +49,7 @@ public class GamePanel extends JPanel implements KeyListener
 	public static TreeSet<Powerup> powerups = new TreeSet<Powerup>();
 
 	private Random random = new Random();
-	private static Player player = new Player(Color.yellow, 3, 300, 600, 10, 50);
+	public static Player player = new Player(Color.yellow, 3, 300, 600, 10, 50);
 
 	private static boolean paused = false;
 	private static boolean win = false;
@@ -68,7 +68,7 @@ public class GamePanel extends JPanel implements KeyListener
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-		spawnEnemies();
+		//spawnEnemies();
 		spawnBoss();
 		startTime = System.currentTimeMillis();
 
@@ -93,7 +93,7 @@ public class GamePanel extends JPanel implements KeyListener
 
 	public static void spawnBoss()
 	{
-		boss = new Boss(new Color(2, 110, 250), 4, 200, 100, 100, 500);
+		boss = new Boss(new Color(2, 110, 250), 3, 200, 100, 100, 500);
 	}
 
 	public static void spawnEnemies()
@@ -371,8 +371,8 @@ public class GamePanel extends JPanel implements KeyListener
 						Object[] arr = enemies.toArray();
 						Enemy one = (Enemy) arr[r1];
 						Enemy two = (Enemy) arr[r2];
-						eAttacks.add(new EnemyAttack(Color.red, 3, one.getX() + 6, one.getY() + 15, 6, 5, 0, true));
-						eAttacks.add(new EnemyAttack(Color.red, 3, two.getX() + 6, two.getY() + 15, 6, 5, 0, true));
+						eAttacks.add(new EnemyAttack(Color.red, 3, one.getX() + 6, one.getY() + 15, 6, 5));
+						eAttacks.add(new EnemyAttack(Color.red, 3, two.getX() + 6, two.getY() + 15, 6, 5));
 					}
 
 					enemyAttackTime++;

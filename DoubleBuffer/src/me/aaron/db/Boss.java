@@ -98,7 +98,7 @@ public class Boss extends Entity
 		g.fillRect(x - quarterSize, y + getSize() - quarterSize, halfSize, halfSize);
 		g.fillRect(x + getSize() - quarterSize, y - quarterSize, halfSize, halfSize);
 		g.fillRect(x + getSize() - quarterSize, y + getSize() - quarterSize, halfSize, halfSize);
-
+		
 		if (timesKilled == 0)
 		{
 			Graphics2D g2 = (Graphics2D) g;
@@ -114,9 +114,11 @@ public class Boss extends Entity
 	{
 		Pair bottomLeftCorner = new Pair(getX(), getY() + getSize());
 		Pair bottomRightCorner = new Pair(getX() + getSize(), getY() + getSize());
+		
+		Player player = GamePanel.player;
 
-		GamePanel.eAttacks.add(new EnemyAttack(Color.blue, 3, bottomLeftCorner.getX() + 1, bottomLeftCorner.getY(), 10, 10, -1, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.green, 3, bottomRightCorner.getX() + 1, bottomRightCorner.getY(), 10, 10, -1, false));
+		GamePanel.eAttacks.add(new LineAttack(Color.green, 0.008, bottomLeftCorner.getX(), bottomLeftCorner.getY(), 10, 10, player.getX(), player.getY()));
+		GamePanel.eAttacks.add(new LineAttack(Color.orange, 0.008, bottomRightCorner.getX(), bottomRightCorner.getY(), 10, 10, player.getX(), player.getY()));
 	}
 	
 	public void spawnAftAttacks()
@@ -124,17 +126,13 @@ public class Boss extends Entity
 		Pair topLeftCorner = new Pair(getX(), getY());
 		Pair topRightCorner = new Pair(getX() + getSize(), getY());
 		
-		GamePanel.eAttacks.add(new EnemyAttack(Color.red, 3, topLeftCorner.getX() + 1, topLeftCorner.getY(), 10, 10, -2, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.red, 3, topLeftCorner.getX() + 2, topLeftCorner.getY(), 10, 10, -1, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.red, 3, topLeftCorner.getX() + 3, topLeftCorner.getY(), 10, 10, 0, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.red, 3, topLeftCorner.getX() + 4, topLeftCorner.getY(), 10, 10, 1, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.red, 3, topLeftCorner.getX() + 5, topLeftCorner.getY(), 10, 10, 2, false));
+		Player player = GamePanel.player;
 		
-		GamePanel.eAttacks.add(new EnemyAttack(Color.orange, 3, topRightCorner.getX() + 1, topRightCorner.getY(), 10, 10, -2, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.orange, 3, topRightCorner.getX() + 2, topRightCorner.getY(), 10, 10, -1, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.orange, 3, topRightCorner.getX() + 3, topRightCorner.getY(), 10, 10, -0, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.orange, 3, topRightCorner.getX() + 4, topRightCorner.getY(), 10, 10,  1, false));
-		GamePanel.eAttacks.add(new EnemyAttack(Color.orange, 3, topRightCorner.getX() + 5, topRightCorner.getY(), 10, 10,  2, false));
+		for(int i = 0; i < 10; i++)
+		{
+			GamePanel.eAttacks.add(new LineAttack(Color.red, 0.003, topLeftCorner.getX() + i, topLeftCorner.getY(), 10, 10, i * 100, 700));
+			GamePanel.eAttacks.add(new LineAttack(Color.blue, 0.003, topRightCorner.getX() + i, topRightCorner.getY(), 10, 10, i * 100, 700));
+		}
 	}
 	
 	public void update(boolean shouldUpdate)
@@ -176,15 +174,16 @@ public class Boss extends Entity
 			if (getX() >= 600 - getSize()) countUp = false;
 			if (getX() <= getSize()) countUp = true;
 
-			if (attackTime % attackSeparation == 0 && shrinkFlag == false)
+			if (shrinkFlag == false)
 			{
-				spawnForwardAttacks();
+				if(attackTime % attackSeparation == 0) spawnForwardAttacks();
+				if(attackTime % (attackSeparation + 500) == 0) spawnAftAttacks();
+				if(attackTime % (attackSeparation + 200) == 0 && timesKilled == 1)
+				{
+					GamePanel.eAttacks.add(new HomingAttack(Color.magenta, getSize() + getSize()/2, getSize() + getSize()/2, 10, 10));
+				}
 			}
 			
-			if(attackTime % (attackSeparation + 80) == 0 && shrinkFlag == false)
-			{
-				spawnAftAttacks();
-			}
 
 			attackTime++;
 		}

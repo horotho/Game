@@ -12,7 +12,7 @@ public class Player extends Entity
 	private int hitPoints, originalHitPoints, currentDamage, originalDamage, currentSize, originalSize;
 	private int timeSinceLastAttack = 0, hitTimer = 0;
 	boolean isInvincible, isHit;
-	private Timer expireTimer, damageUpTimer;
+	PowerupHelper powerupHelper = new PowerupHelper(this);
 
 	public Player(Color color, int moveSpeed, int x, int y, int size, int hp)
 	{
@@ -58,6 +58,8 @@ public class Player extends Entity
 			isHit = false;
 			hitTimer = 0;
 		}
+		
+		powerupHelper.decrementPowerups();
 	}
 
 	public void spawnAttack()
@@ -93,67 +95,11 @@ public class Player extends Entity
 		return hitPoints;
 	}
 
-	public void applyPowerup(Powerup powerUp)
+	public void applyPowerup(Powerup powerup)
 	{
-		switch (powerUp.getID())
-		{
-		// Invincibility
-			case 0:
-			{
-				isInvincible = true;
-				playSound("invinc.wav", -10.0f);
-				
-				if(expireTimer != null) expireTimer.stop();
-				
-				final long time = System.currentTimeMillis();
-				expireTimer = new Timer(1, new ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent arg0)
-					{
-						System.out.println("Time to expire: " + (System.currentTimeMillis() - time));
-						isInvincible = false;
-					}
-
-				});
-				
-				//Invincible for 5 seconds
-				expireTimer.setInitialDelay(7800);
-				expireTimer.setRepeats(false);
-				expireTimer.start();
-				
-				break;
-			}
-				
-		    // Damage up
-			case 1:
-			{
-				currentDamage += 10;
-				currentSize += 5;
-				
-				if(damageUpTimer != null) damageUpTimer.stop();
-				
-				damageUpTimer = new Timer(1, new ActionListener()
-				{
-					@Override
-					public void actionPerformed(ActionEvent arg0)
-					{
-						currentDamage = originalDamage;
-						currentSize = originalSize;
-					}
-
-				});
-				
-				//Damage up for 5 seconds
-				damageUpTimer.setInitialDelay(5 * 1000);
-				damageUpTimer.setRepeats(false);
-				damageUpTimer.start();
-				
-				break;
-			}
-		}
+		powerupHelper.addPowerup(powerup);
 	}
-
+	
 	public void decrementHP(int amount)
 	{
 		if (isInvincible == false)
@@ -178,6 +124,28 @@ public class Player extends Entity
 	public void setHitPointsFull()
 	{
 		hitPoints = originalHitPoints;
+	}
+	
+	public void setInvincible(boolean inv)
+	{
+		isInvincible = inv;
+	}
+	
+	public void damageModify(boolean shouldModify)
+	{
+		if(shouldModify == true)
+		{
+			currentDamage += 5;
+			currentSize += 5;
+		}
+		else
+		{
+			currentDamage -= 5;
+			currentSize -= 5;
+			
+			if(currentDamage < originalDamage) currentDamage = originalDamage;
+			if(currentSize < originalSize) currentSize = originalSize;
+		}
 	}
 
 }

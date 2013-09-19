@@ -42,7 +42,7 @@ public class Powerup extends Entity
 		});
 
 		// Set the powerup to expire in 10 seconds
-		expireTimer.setInitialDelay(10 * 1000);
+		expireTimer.setInitialDelay(8 * 1000);
 		expireTimer.setRepeats(false);
 		expireTimer.start();
 
@@ -86,6 +86,19 @@ public class Powerup extends Entity
 	public int getID()
 	{
 		return ID;
+	}
+	
+	public int getLength()
+	{
+		switch(ID)
+		{
+			case 0:
+				return 7100;
+			case 1:
+				return 4400;
+			default:
+				return 0;
+		}
 	}
 
 	
